@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { RecoilRoot } from "recoil";
-import { ThemeProvider, createGlobalStyle } from "styled-components";
-import { theme } from "./theme";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Home from "./Routes/Home";
-import Tv from "./Routes/Tv";
-import Search from "./Routes/Search";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { RecoilRoot } from 'recoil';
+import { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { theme } from './theme';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import Home from './Routes/Home';
+import Tv from './Routes/Tv';
+import Search from './Routes/Search';
 
 const GlobalStyle = createGlobalStyle`
   html, body, div, span, applet, object, iframe,
@@ -53,20 +53,34 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+* {
+  box-sizing: border-box;
+}
+body {
+  font-weight: 300;
+  font-family: 'Source Sans Pro', sans-serif;
+  color:${(props) => props.theme.white.darker};
+  line-height: 1.2;
+  background-color: black;
+}
+a {
+  text-decoration:none;
+  color:inherit;
+}
 `;
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById('root') as HTMLElement
 );
 
 const Router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
-      { index: true, path: "/", element: <Home /> },
-      { path: "/tv", element: <Tv /> },
-      { path: "/search", element: <Search /> },
+      { index: true, path: '/', element: <Home /> },
+      { path: '/tv', element: <Tv /> },
+      { path: '/search', element: <Search /> },
     ],
   },
 ]);
