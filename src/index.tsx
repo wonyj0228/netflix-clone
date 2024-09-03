@@ -8,6 +8,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Home from './Routes/Home';
 import Tv from './Routes/Tv';
 import Search from './Routes/Search';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const GlobalStyle = createGlobalStyle`
   html, body, div, span, applet, object, iframe,
@@ -69,6 +70,8 @@ a {
 }
 `;
 
+const client = new QueryClient();
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -89,8 +92,10 @@ root.render(
   // <React.StrictMode>
   <RecoilRoot>
     <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <RouterProvider router={Router} />
+      <QueryClientProvider client={client}>
+        <GlobalStyle />
+        <RouterProvider router={Router} />
+      </QueryClientProvider>
     </ThemeProvider>
   </RecoilRoot>
   // </React.StrictMode>
