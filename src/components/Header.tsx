@@ -1,9 +1,15 @@
 import styled from 'styled-components';
-import { motion, Variants } from 'framer-motion';
+import {
+  motion,
+  Variants,
+  useAnimation,
+  useScroll,
+  useMotionValueEvent,
+} from 'framer-motion';
 import { Link, useMatch } from 'react-router-dom';
 import { useState } from 'react';
 
-const Nav = styled.nav`
+const Nav = styled(motion.nav)`
   width: 100%;
   height: 80px;
   display: flex;
@@ -11,7 +17,6 @@ const Nav = styled.nav`
   align-items: center;
   position: fixed;
   top: 0;
-  background-color: black;
   font-size: 14px;
   padding: 20px 60px;
   color: white;
@@ -99,13 +104,46 @@ const logoVariants: Variants = {
   },
 };
 
+const navVariants = {
+  top: {
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  scroll: {
+    backgroundColor: 'rgba(0,0,0,1)',
+  },
+};
+
 function Header() {
-  const [searchOpen, serSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch('/');
   const tvMatch = useMatch('/tv');
+  const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
+  const { scrollY } = useScroll();
+  // 동시에 여러가지 애니메이션을 한번에 주고싶을 때 사용 (useAnimation 훅)
+  const toggleSearch = () => {
+    if (searchOpen) {
+      inputAnimation.start({
+        scaleX: 0,
+      });
+    } else {
+      inputAnimation.start({
+        scaleX: 1,
+      });
+    }
+    setSearchOpen((prev) => !prev);
+  };
+
+  useMotionValueEvent(scrollY, 'change', () => {
+    if (scrollY.get() > 80) {
+      navAnimation.start('scroll');
+    } else {
+      navAnimation.start('top');
+    }
+  });
 
   return (
-    <Nav>
+    <Nav animate={navAnimation} variants={navVariants} initial="top">
       <Col>
         <Logo
           variants={logoVariants}
@@ -134,7 +172,7 @@ function Header() {
       <Col>
         <Search>
           <motion.svg
-            onClick={() => serSearchOpen((prev) => !prev)}
+            onClick={toggleSearch}
             animate={{
               x: searchOpen ? -210 : 0,
             }}
@@ -150,7 +188,9 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
-            animate={{ scaleX: searchOpen ? 1 : 0 }}
+            animate={inputAnimation}
+            initial={{ scaleX: 0 }}
+            transition={{ ease: 'linear' }}
             placeholder="Search for movie or tv show.."
           />
         </Search>
