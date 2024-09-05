@@ -85,6 +85,7 @@ const Router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, path: '/', element: <Home /> },
+      { path: '/movies/:movieId', element: <Home /> },
       { path: '/tv', element: <Tv /> },
       { path: '/search', element: <Search /> },
     ],
