@@ -6,8 +6,9 @@ import {
   useScroll,
   useMotionValueEvent,
 } from 'framer-motion';
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useMatch, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 const Nav = styled(motion.nav)`
   width: 100%;
@@ -56,7 +57,7 @@ const Item = styled.li`
   }
 `;
 
-const Search = styled.span`
+const Search = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -113,6 +114,10 @@ const navVariants = {
   },
 };
 
+interface IForm {
+  keyword: string;
+}
+
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch('/');
@@ -120,6 +125,10 @@ function Header() {
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
+
+  const { register, handleSubmit } = useForm<IForm>();
+  const navigate = useNavigate();
+
   // 동시에 여러가지 애니메이션을 한번에 주고싶을 때 사용 (useAnimation 훅)
   const toggleSearch = () => {
     if (searchOpen) {
@@ -141,6 +150,11 @@ function Header() {
       navAnimation.start('top');
     }
   });
+
+  const onValid = (data: IForm) => {
+    console.log(data);
+    navigate(`/search?keyword=${data.keyword}`);
+  };
 
   return (
     <Nav animate={navAnimation} variants={navVariants} initial="top">
@@ -170,7 +184,7 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
             animate={{
@@ -187,7 +201,9 @@ function Header() {
               clipRule="evenodd"
             ></path>
           </motion.svg>
+
           <Input
+            {...register('keyword', { required: true, minLength: 2 })}
             animate={inputAnimation}
             initial={{ scaleX: 0 }}
             transition={{ ease: 'linear' }}
